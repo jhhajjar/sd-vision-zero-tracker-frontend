@@ -87,7 +87,6 @@ export const ArticleTable: React.FC<TableProps> = (props: TableProps) => {
                     style={{
                       backgroundColor: hoveredRow === row.id ? '#3a3a3a' : '#2a2a2a',
                       cursor: 'pointer',
-                      transition: 'background-color 0.2s',
                     }}
                     onMouseEnter={() => setHoveredRow(row.id)}
                     onMouseLeave={() => setHoveredRow(null)}

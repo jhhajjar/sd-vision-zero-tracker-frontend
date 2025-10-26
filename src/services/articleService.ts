@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.BACKEND_URL || 'http://127.0.0.1:5000';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:5083';
 
 enum SOURCE_TYPE {
     FOX5 = 'FOX5',
