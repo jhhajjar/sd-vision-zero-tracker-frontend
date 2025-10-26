@@ -14,23 +14,17 @@ interface Column {
   label: string;
   minWidth?: number;
   align?: 'right';
-  format?: (value: number) => string;
+  format?: (value: string) => string;
 }
 
 const columns: readonly Column[] = [
-  { id: 'title', label: 'Headline', minWidth: 170 },
+  { id: 'title', label: 'Article', minWidth: 170 },
   { 
     id: 'date_posted', 
     label: 'Date', 
     minWidth: 100, 
     align: 'right',
     format: (value: string) => new Date(value).toDateString(),
-  },
-  {
-    id: 'link',
-    label: 'Link to Article',
-    minWidth: 170,
-    align: 'right',
   },
 ];
 
@@ -43,6 +37,7 @@ export const ArticleTable: React.FC<TableProps> = (props: TableProps) => {
   const { articles } = props
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [hoveredRow, setHoveredRow] = React.useState<string | null>(null);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -53,8 +48,14 @@ export const ArticleTable: React.FC<TableProps> = (props: TableProps) => {
     setPage(0);
   };
 
+  const cellStyling = { color: '#fff', borderColor: '#444' }
+
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <Paper sx={{
+      width: '100%',
+      backgroundColor: '#1a1a1a',
+      color: '#fff'
+    }}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -63,7 +64,13 @@ export const ArticleTable: React.FC<TableProps> = (props: TableProps) => {
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{ minWidth: column.minWidth }}
+                  style={{
+                    minWidth: column.minWidth,
+                    fontWeight: 'bold',
+                    fontSize: '20px',
+                    backgroundColor: '#1a1a1a',
+                    color: '#fff'
+                }}
                 >
                   {column.label}
                 </TableCell>
@@ -75,25 +82,32 @@ export const ArticleTable: React.FC<TableProps> = (props: TableProps) => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <tr
+                    key={row.id}
+                    style={{
+                      backgroundColor: hoveredRow === row.id ? '#3a3a3a' : '#2a2a2a',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s',
+                    }}
+                    onMouseEnter={() => setHoveredRow(row.id)}
+                    onMouseLeave={() => setHoveredRow(null)}
+                    onClick={() => {window.open(row['link'], '_blank', 'noopener,noreferrer')}}
+                  >
                     {columns.map((column) => {
                       const value = row[column.id];
-                      if (column.id === 'link') {
-                        return (
-                            <TableCell key={column.id} align={column.align}>
-                                <a href={value}>Link To Article</a>
-                            </TableCell>
-                        )
-                      }
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell
+                          key={column.id}
+                          align={column.align}
+                          sx={cellStyling}
+                        >
                           {column.format
                             ? column.format(value)
                             : value}
                         </TableCell>
                       );
                     })}
-                  </TableRow>
+                  </tr>
                 );
               })}
           </TableBody>
@@ -107,6 +121,16 @@ export const ArticleTable: React.FC<TableProps> = (props: TableProps) => {
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+        sx={{
+          color: '#fff',
+          borderTop: '1px solid #444',
+          '.MuiTablePagination-actions button': {
+            color: '#fff'
+          },
+          '.MuiTablePagination-displayedRows': {
+            color: '#fff'
+          }
+        }}
       />
     </Paper>
   );

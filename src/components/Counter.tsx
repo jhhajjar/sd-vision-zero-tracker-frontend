@@ -4,13 +4,14 @@ interface CounterProps {
 
 const Counter: React.FC<CounterProps> = (props: CounterProps) => {
     const { days: daysSinceFatality } = props
+    const dayText = daysSinceFatality === 1 ? 'Day' : 'Days'
     return (
         <>
         <div style={styles.card}>
             <h1>
             {daysSinceFatality}
             </h1>
-            <h1>Days without a fatality on San Diego's roads</h1>
+            <h1>{dayText} without a fatality on San Diego's roads</h1>
         </div>
         </>
     )
