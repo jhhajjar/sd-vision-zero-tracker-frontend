@@ -67,14 +67,13 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
               .map((row) => {
                 return (
                   <tr
-                    key={row.id}
+                    key={row.report_id}
                     style={{
-                      backgroundColor: hoveredRow === row.id ? '#3a3a3a' : '#2a2a2a',
+                      backgroundColor: hoveredRow === row.report_id ? '#3a3a3a' : '#2a2a2a',
                       cursor: 'pointer',
                     }}
-                    onMouseEnter={() => setHoveredRow(row.id)}
+                    onMouseEnter={() => setHoveredRow(row.report_id)}
                     onMouseLeave={() => setHoveredRow(null)}
-                    onClick={() => {window.open(row['link'], '_blank', 'noopener,noreferrer')}}
                   >
                     {columns.map((column) => {
                       const value = row[column.id];

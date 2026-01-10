@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export type Incident = {
-    id: string,
+    report_id: string,
     date_time: string,
     full_address: string,
     charge_desc: string,
