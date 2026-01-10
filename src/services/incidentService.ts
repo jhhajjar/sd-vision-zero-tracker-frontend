@@ -21,7 +21,6 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:5000'
 
 export async function fetchIncidents(): Promise<IncidentListDTO[]> {
     const response = await axios.get(`${API_BASE_URL}/incidents?page=1&pageSize=1`);
-    console.log(response.data)
     return response.data;
 };
 
