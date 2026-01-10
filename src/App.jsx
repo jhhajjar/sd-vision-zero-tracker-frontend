@@ -10,7 +10,6 @@ import { IncidentTable } from './components/IncidentTable'
 function App() {
   const [articles, setArticles] = useState([])
   const [incidents, setIncidents] = useState([])
-  const [incidentMetadata, setIncidentMetadata] = useState(null)
   const [days, setDays] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -56,8 +55,9 @@ function App() {
   useEffect(() => {
     const loadIncidentMetadata = async () => {
         try {
-          const data = await fetchIncidentMetadata()
-          setIncidentMetadata(data)
+          const incidentMetadata = await fetchIncidentMetadata()
+          const daysResponse = incidentMetadata?.number_of_days_since_last_incident ?? 0
+          setDays(daysResponse)
         } catch (err) {
           console.error('Error fetching incidents:', err)
           setError(err)
@@ -75,7 +75,7 @@ function App() {
   return (
     <>
       <Header />
-      <Counter days={incidentMetadata?.number_of_days_since_last_incident ?? 0} />
+      <Counter days={days} />
       {/* <ArticleTable articles={articles} /> */}
       <IncidentTable incidents={incidents} />
     </>
