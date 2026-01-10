@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import Counter from './components/Counter'
-import Header from './components/header'
+import Header from './components/Header'
 import { ArticleTable } from './components/ArticleTable'
 import { fetchArticles, daysSinceLastFatality } from './services/articleService'
+import { fetchIncidentMetadata, fetchIncidents } from './services/incidentService'
+import { IncidentTable } from './components/IncidentTable'
 
 function App() {
   const [articles, setArticles] = useState([])
+  const [incidents, setIncidents] = useState([])
+  const [incidentMetadata, setIncidentMetadata] = useState(null)
   const [days, setDays] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -35,14 +39,49 @@ function App() {
     loadArticles()
   }, []) // Empty dependency array = runs once on mount
 
+  useEffect(() => {
+    const loadIncidents = async () => {
+        try {
+          const data = await fetchIncidents()
+          console.log(typeof data) 
+          setIncidents(data.incidents)
+        } catch (err) {
+          console.error('Error fetching incidents:', err)
+          setError(err)
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      loadIncidents()
+  }, []) // Empty dependency array = runs once on mount
+
+  useEffect(() => {
+    const loadIncidentMetadata = async () => {
+        try {
+          const data = await fetchIncidentMetadata()
+          // console.log('incident metadata :>> ', data)
+          setIncidentMetadata(data)
+        } catch (err) {
+          console.error('Error fetching incidents:', err)
+          setError(err)
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      loadIncidentMetadata()
+  }, []) // Empty dependency array = runs once on mount
+
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error loading articles: {error.message}</div>
 
   return (
     <>
       <Header />
-      <Counter days={days} />
-      <ArticleTable articles={articles} />
+      <Counter days={incidentMetadata?.number_of_days_since_last_incident ?? 0} />
+      {/* <ArticleTable articles={articles} /> */}
+      <IncidentTable incidents={incidents} />
     </>
   )
 }
