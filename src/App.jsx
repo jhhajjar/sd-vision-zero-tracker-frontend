@@ -19,14 +19,12 @@ function App() {
     // Set days for counter
     const days = daysSinceLastFatality(articles)
     setDays(days)
-    console.log('we have set the days to be', days)
   }, [articles])
 
   useEffect(() => {
     const loadArticles = async () => {
       try {
         const data = await fetchArticles()
-        console.log('articles :>> ', data)
         setArticles(data)
       } catch (err) {
         console.error('Error fetching articles:', err)
@@ -43,7 +41,6 @@ function App() {
     const loadIncidents = async () => {
         try {
           const data = await fetchIncidents()
-          console.log(typeof data) 
           setIncidents(data.incidents)
         } catch (err) {
           console.error('Error fetching incidents:', err)
@@ -60,7 +57,6 @@ function App() {
     const loadIncidentMetadata = async () => {
         try {
           const data = await fetchIncidentMetadata()
-          // console.log('incident metadata :>> ', data)
           setIncidentMetadata(data)
         } catch (err) {
           console.error('Error fetching incidents:', err)
