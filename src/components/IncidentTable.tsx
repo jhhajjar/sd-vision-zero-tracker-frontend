@@ -18,6 +18,8 @@ interface TableProps {
   totalIncidents: number;
   onPageChange: (event: unknown, newPage: number) => void;
   loading: boolean;
+  hoveredIncidentId: string | null;
+  onHoverChange: (id: string | null) => void;
 }
 
 interface Column {
@@ -36,8 +38,7 @@ const columns: Column[] = [
 ];
 
 export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
-  const { loading, incidents, page, totalIncidents, pageSize, onPageChange } = props;
-  const [hoveredRow, setHoveredRow] = React.useState<string | null>(null);
+  const { loading, incidents, page, totalIncidents, pageSize, onPageChange, hoveredIncidentId, onHoverChange } = props;
 
   const cellStyling = { color: "#fff", borderColor: "#444" };
 
@@ -89,11 +90,11 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
                   key={row.report_id}
                   style={{
                     backgroundColor:
-                      hoveredRow === row.report_id ? "#3a3a3a" : "#2a2a2a",
+                      hoveredIncidentId === row.report_id ? "#3a3a3a" : "#2a2a2a",
                     cursor: "pointer",
                   }}
-                  onMouseEnter={() => setHoveredRow(row.report_id)}
-                  onMouseLeave={() => setHoveredRow(null)}
+                  onMouseEnter={() => onHoverChange(row.report_id)}
+                  onMouseLeave={() => onHoverChange(null)}
                 >
                   {columns.map((column) => {
                     const value = row[column.id];

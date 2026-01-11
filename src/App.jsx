@@ -6,6 +6,7 @@ import { ArticleTable } from './components/ArticleTable'
 import { fetchArticles, daysSinceLastFatality } from './services/articleService'
 import { fetchIncidentMetadata, fetchIncidents } from './services/incidentService'
 import { IncidentTable } from './components/IncidentTable'
+import { IncidentMap } from './components/IncidentMap'
 
 const shittyCache = new Map()
 
@@ -18,7 +19,8 @@ function App() {
   const [incidentTableLoading, setIncidentTableLoading] = useState(true)
   const [incidentTablePage, setIncidentTablePage] = useState(0)
   const [error, setError] = useState(null)
-  
+  const [hoveredIncidentId, setHoveredIncidentId] = useState(null)
+
   const pageSize = 20
 
   useEffect(function onLoadArticles() {
@@ -107,14 +109,21 @@ function App() {
     <>
       <Header />
       <Counter days={days} />
+      <IncidentMap
+        incidents={incidents}
+        hoveredIncidentId={hoveredIncidentId}
+        onMarkerHover={setHoveredIncidentId}
+      />
       {/* <ArticleTable articles={articles} /> */}
-      <IncidentTable 
-        loading={incidentTableLoading} 
+      <IncidentTable
+        loading={incidentTableLoading}
         incidents={incidents}
         page={incidentTablePage}
-        pageSize={pageSize} 
-        totalIncidents={totalIncidents} 
-        onPageChange={onPageChange} 
+        pageSize={pageSize}
+        totalIncidents={totalIncidents}
+        onPageChange={onPageChange}
+        hoveredIncidentId={hoveredIncidentId}
+        onHoverChange={setHoveredIncidentId}
       />
     </>
   )

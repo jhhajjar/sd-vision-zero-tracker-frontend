@@ -7,6 +7,8 @@ export type Incident = {
     charge_desc: string,
     injured: number,
     killed: number,
+    latitude: number | null,
+    longitude: number | null,
 }
 
 export type IncidentListDTO = {
@@ -15,7 +17,6 @@ export type IncidentListDTO = {
     pageSize: number,
     totalIncidents: number
 }
-// Users should be able to zoom into map, see multiple pins at once, click on pin to see incident details
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:5000';
 
