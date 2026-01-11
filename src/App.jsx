@@ -13,7 +13,11 @@ function App() {
   const [totalIncidents, setTotalIncidents] = useState(0)
   const [days, setDays] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [incidentTableLoading, setIncidentTableLoading] = useState(true)
+  const [incidentTablePage, setIncidentTablePage] = useState(0)
   const [error, setError] = useState(null)
+
+  const pageSize = 20
 
   useEffect(function onLoadArticles() {
     // Set days for counter
@@ -40,7 +44,7 @@ function App() {
   useEffect(() => {
     const loadIncidents = async () => {
         try {
-          const data = await fetchIncidents(1, 5)
+          const data = await fetchIncidents(1, pageSize)
           setIncidents(data.incidents)
           setTotalIncidents(data.totalIncidents)
         } catch (err) {
@@ -48,6 +52,7 @@ function App() {
           setError(err)
         } finally {
           setLoading(false)
+          setIncidentTableLoading(false)
         }
       }
 
@@ -71,6 +76,20 @@ function App() {
       loadIncidentMetadata()
   }, []) // Empty dependency array = runs once on mount
 
+  const onPageChange = async (_, newPage) => {
+    const pageParam = newPage + 1; // Convert zero-based to one-based index
+    
+    // Fetch new incidents for the selected page
+    setIncidentTableLoading(true)
+    const newIncidents = await fetchIncidents(pageParam, pageSize)
+    setIncidentTablePage(newPage)
+    setIncidentTableLoading(false)
+
+    // Read results
+    setIncidents(newIncidents.incidents)
+    setTotalIncidents(newIncidents.totalIncidents)
+  }
+
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error loading articles: {error.message}</div>
 
@@ -79,7 +98,14 @@ function App() {
       <Header />
       <Counter days={days} />
       {/* <ArticleTable articles={articles} /> */}
-      <IncidentTable incidents={incidents} totalIncidents={totalIncidents} />
+      <IncidentTable 
+        loading={incidentTableLoading} 
+        incidents={incidents}
+        page={incidentTablePage}
+        pageSize={pageSize} 
+        totalIncidents={totalIncidents} 
+        onPageChange={onPageChange} 
+      />
     </>
   )
 }

@@ -10,44 +10,49 @@ import TablePagination from "@mui/material/TablePagination";
 import React from "react";
 
 interface TableProps {
-    incidents: Incident[]
-    totalIncidents: number
+  incidents: Incident[];
+  page: number;
+  pageSize: number;
+  totalIncidents: number;
+  onPageChange: (event: unknown, newPage: number) => void;
+  loading: boolean;
 }
 
 interface Column {
-    id: keyof Incident;
-    label: string;
-    minWidth?: number;
-    align?: 'right' | 'left';
+  id: keyof Incident;
+  label: string;
+  minWidth?: number;
+  align?: "right" | "left";
 }
 
 const columns: Column[] = [
-    { id: 'full_address', label: 'Location', minWidth: 200 },
-    { id: 'date_time', label: 'Date' },
-    { id: 'charge_desc', label: 'Charge Description' },
-    { id: 'injured', label: 'Injured', align: "right" },
-    { id: 'killed', label: 'Killed', align: "right" },
-]
+  { id: "full_address", label: "Location", minWidth: 200 },
+  { id: "date_time", label: "Date" },
+  { id: "charge_desc", label: "Charge Description" },
+  { id: "injured", label: "Injured", align: "right" },
+  { id: "killed", label: "Killed", align: "right" },
+];
 
 export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
-  const { incidents, totalIncidents } = props
-  const [page, setPage] = React.useState(0);
+  const { loading, incidents, page, totalIncidents, pageSize, onPageChange } = props;
   const [hoveredRow, setHoveredRow] = React.useState<string | null>(null);
 
-  const cellStyling = { color: '#fff', borderColor: '#444' }
+  const cellStyling = { color: "#fff", borderColor: "#444" };
 
-  const handleChangePage = (_: unknown, newPage: number) => {
-    console.log('We are handling a page change')
-    console.log('New page is:', newPage)
-    setPage(newPage);
-  }
+  const handleChangePage = async (_: unknown, newPage: number) => {
+    await onPageChange(_, newPage);
+  };
 
-  return (
-    <Paper sx={{
-      width: '100%',
-      backgroundColor: '#1a1a1a',
-      color: '#fff'
-    }}>
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
+    <Paper
+      sx={{
+        width: "100%",
+        backgroundColor: "#1a1a1a",
+        color: "#fff",
+      }}
+    >
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -58,11 +63,11 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
                   align={column.align}
                   style={{
                     minWidth: column.minWidth,
-                    fontWeight: 'bold',
-                    fontSize: '20px',
-                    backgroundColor: '#1a1a1a',
-                    color: '#fff'
-                }}
+                    fontWeight: "bold",
+                    fontSize: "20px",
+                    backgroundColor: "#1a1a1a",
+                    color: "#fff",
+                  }}
                 >
                   {column.label}
                 </TableCell>
@@ -70,33 +75,33 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {incidents
-              .map((row) => {
-                return (
-                  <tr
-                    key={row.report_id}
-                    style={{
-                      backgroundColor: hoveredRow === row.report_id ? '#3a3a3a' : '#2a2a2a',
-                      cursor: 'pointer',
-                    }}
-                    onMouseEnter={() => setHoveredRow(row.report_id)}
-                    onMouseLeave={() => setHoveredRow(null)}
-                  >
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell
-                          key={column.id}
-                          align={column.align}
-                          sx={cellStyling}
-                        >
-                          {value}
-                        </TableCell>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
+            {incidents.map((row) => {
+              return (
+                <tr
+                  key={row.report_id}
+                  style={{
+                    backgroundColor:
+                      hoveredRow === row.report_id ? "#3a3a3a" : "#2a2a2a",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={() => setHoveredRow(row.report_id)}
+                  onMouseLeave={() => setHoveredRow(null)}
+                >
+                  {columns.map((column) => {
+                    const value = row[column.id];
+                    return (
+                      <TableCell
+                        key={column.id}
+                        align={column.align}
+                        sx={cellStyling}
+                      >
+                        {value}
+                      </TableCell>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -104,21 +109,21 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
         rowsPerPageOptions={[]}
         component="div"
         count={totalIncidents}
-        rowsPerPage={incidents.length}
+        rowsPerPage={pageSize}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={() => {}}
         sx={{
-          color: '#fff',
-          borderTop: '1px solid #444',
-          '.MuiTablePagination-actions button': {
-            color: '#fff'
+          color: "#fff",
+          borderTop: "1px solid #444",
+          ".MuiTablePagination-actions button": {
+            color: "#fff",
           },
-          '.MuiTablePagination-displayedRows': {
-            color: '#fff'
-          }
+          ".MuiTablePagination-displayedRows": {
+            color: "#fff",
+          },
         }}
       />
     </Paper>
-  )
-}
+  );
+};
