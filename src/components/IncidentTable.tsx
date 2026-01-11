@@ -8,6 +8,8 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TablePagination from "@mui/material/TablePagination";
 import React from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 
 interface TableProps {
   incidents: Incident[];
@@ -43,9 +45,15 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
     await onPageChange(_, newPage);
   };
 
-  return loading ? (
-    <div>Loading...</div>
-  ) : (
+  const spinner = <>
+    <TableCell colSpan={5} sx={{ justifyContent: 'center', alignItems: 'center', height: 200 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    </TableCell>
+  </>
+
+  return (
     <Paper
       sx={{
         width: "100%",
@@ -75,7 +83,7 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {incidents.map((row) => {
+            {loading ? spinner : incidents.map((row) => {
               return (
                 <tr
                   key={row.report_id}

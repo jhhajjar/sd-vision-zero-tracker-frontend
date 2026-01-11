@@ -7,6 +7,8 @@ import { fetchArticles, daysSinceLastFatality } from './services/articleService'
 import { fetchIncidentMetadata, fetchIncidents } from './services/incidentService'
 import { IncidentTable } from './components/IncidentTable'
 
+const shittyCache = new Map()
+
 function App() {
   const [articles, setArticles] = useState([])
   const [incidents, setIncidents] = useState([])
@@ -16,7 +18,7 @@ function App() {
   const [incidentTableLoading, setIncidentTableLoading] = useState(true)
   const [incidentTablePage, setIncidentTablePage] = useState(0)
   const [error, setError] = useState(null)
-
+  
   const pageSize = 20
 
   useEffect(function onLoadArticles() {
@@ -47,6 +49,7 @@ function App() {
           const data = await fetchIncidents(1, pageSize)
           setIncidents(data.incidents)
           setTotalIncidents(data.totalIncidents)
+          shittyCache.set(1, data.incidents)
         } catch (err) {
           console.error('Error fetching incidents:', err)
           setError(err)
@@ -81,13 +84,20 @@ function App() {
     
     // Fetch new incidents for the selected page
     setIncidentTableLoading(true)
-    const newIncidents = await fetchIncidents(pageParam, pageSize)
-    setIncidentTablePage(newPage)
+    if (shittyCache.has(pageParam)) {
+      const cachedIncidents = shittyCache.get(pageParam)
+      setIncidents(cachedIncidents)
+    } else {
+      // Get from backend
+      const newIncidents = await fetchIncidents(pageParam, pageSize)
+      setIncidents(newIncidents.incidents)
+      setTotalIncidents(newIncidents.totalIncidents)
+      
+      // Set cache
+      shittyCache.set(pageParam, newIncidents.incidents)
+    }
     setIncidentTableLoading(false)
-
-    // Read results
-    setIncidents(newIncidents.incidents)
-    setTotalIncidents(newIncidents.totalIncidents)
+    setIncidentTablePage(newPage)
   }
 
   if (loading) return <div>Loading...</div>
