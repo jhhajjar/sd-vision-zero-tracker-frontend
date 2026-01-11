@@ -10,6 +10,7 @@ import { IncidentTable } from './components/IncidentTable'
 function App() {
   const [articles, setArticles] = useState([])
   const [incidents, setIncidents] = useState([])
+  const [totalIncidents, setTotalIncidents] = useState(0)
   const [days, setDays] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -39,8 +40,9 @@ function App() {
   useEffect(() => {
     const loadIncidents = async () => {
         try {
-          const data = await fetchIncidents()
+          const data = await fetchIncidents(1, 5)
           setIncidents(data.incidents)
+          setTotalIncidents(data.totalIncidents)
         } catch (err) {
           console.error('Error fetching incidents:', err)
           setError(err)
@@ -77,7 +79,7 @@ function App() {
       <Header />
       <Counter days={days} />
       {/* <ArticleTable articles={articles} /> */}
-      <IncidentTable incidents={incidents} />
+      <IncidentTable incidents={incidents} totalIncidents={totalIncidents} />
     </>
   )
 }

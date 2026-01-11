@@ -11,6 +11,7 @@ import React from "react";
 
 interface TableProps {
     incidents: Incident[]
+    totalIncidents: number
 }
 
 interface Column {
@@ -29,11 +30,17 @@ const columns: Column[] = [
 ]
 
 export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
-  const { incidents } = props
-//   const [page, setPage] = React.useState(0);
+  const { incidents, totalIncidents } = props
+  const [page, setPage] = React.useState(0);
   const [hoveredRow, setHoveredRow] = React.useState<string | null>(null);
 
   const cellStyling = { color: '#fff', borderColor: '#444' }
+
+  const handleChangePage = (_: unknown, newPage: number) => {
+    console.log('We are handling a page change')
+    console.log('New page is:', newPage)
+    setPage(newPage);
+  }
 
   return (
     <Paper sx={{
@@ -93,14 +100,14 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <TablePagination
+      <TablePagination
         rowsPerPageOptions={[]}
         component="div"
-        count={incidents.length}
+        count={totalIncidents}
         rowsPerPage={incidents.length}
         page={page}
         onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        onRowsPerPageChange={() => {}}
         sx={{
           color: '#fff',
           borderTop: '1px solid #444',
@@ -111,7 +118,7 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
             color: '#fff'
           }
         }}
-      /> */}
+      />
     </Paper>
   )
 }
