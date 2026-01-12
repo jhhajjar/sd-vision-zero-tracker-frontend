@@ -160,10 +160,9 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
       ref={mapContainerRef}
       sx={{
         width: "100%",
-        height: "400px",
+        height: "100%",
         borderRadius: "8px",
         overflow: "hidden",
-        marginBottom: "20px",
       }}
     />
   );

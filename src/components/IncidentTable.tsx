@@ -46,24 +46,43 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
     await onPageChange(_, newPage);
   };
 
-  const spinner = <>
-    <TableCell colSpan={5} sx={{ justifyContent: 'center', alignItems: 'center', height: 200 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <CircularProgress />
-      </Box>
-    </TableCell>
-  </>
+  const spinner = (
+    <TableRow sx={{ height: "100%" }}>
+      <TableCell
+        colSpan={5}
+        sx={{
+          height: "100%",
+          borderBottom: "none",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+            // minHeight: 300,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </TableCell>
+    </TableRow>
+  );
 
   return (
     <Paper
       sx={{
         width: "100%",
+        height: "100%",
         backgroundColor: "#1a1a1a",
         color: "#fff",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+      <TableContainer sx={{ flex: 1, overflow: "auto" }}>
+        <Table stickyHeader aria-label="sticky table" sx={{ height: loading ? "100%" : "auto" }}>
           <TableHead>
             <TableRow>
               {columns.map((column) => (
@@ -83,7 +102,7 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody sx={loading ? { height: "100%" } : undefined}>
             {loading ? spinner : incidents.map((row) => {
               return (
                 <tr

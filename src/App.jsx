@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import Counter from './components/Counter'
 import Header from './components/Header'
+import Box from '@mui/material/Box';
 import { ArticleTable } from './components/ArticleTable'
 import { fetchArticles, daysSinceLastFatality } from './services/articleService'
 import { fetchIncidentMetadata, fetchIncidents } from './services/incidentService'
@@ -109,22 +110,35 @@ function App() {
     <>
       <Header />
       <Counter days={days} />
-      <IncidentMap
-        incidents={incidents}
-        hoveredIncidentId={hoveredIncidentId}
-        onMarkerHover={setHoveredIncidentId}
-      />
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 3,
+        alignItems: 'stretch',
+        height: 500,
+        padding: 2,
+      }}>
+        <Box sx={{ flex: 1 }}>
+          <IncidentMap
+            incidents={incidents}
+            hoveredIncidentId={hoveredIncidentId}
+            onMarkerHover={setHoveredIncidentId}
+          />
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <IncidentTable
+            loading={incidentTableLoading}
+            incidents={incidents}
+            page={incidentTablePage}
+            pageSize={pageSize}
+            totalIncidents={totalIncidents}
+            onPageChange={onPageChange}
+            hoveredIncidentId={hoveredIncidentId}
+            onHoverChange={setHoveredIncidentId}
+          />
+        </Box>
+      </Box>
       {/* <ArticleTable articles={articles} /> */}
-      <IncidentTable
-        loading={incidentTableLoading}
-        incidents={incidents}
-        page={incidentTablePage}
-        pageSize={pageSize}
-        totalIncidents={totalIncidents}
-        onPageChange={onPageChange}
-        hoveredIncidentId={hoveredIncidentId}
-        onHoverChange={setHoveredIncidentId}
-      />
     </>
   )
 }
