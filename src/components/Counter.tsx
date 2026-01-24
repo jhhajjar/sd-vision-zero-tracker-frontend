@@ -17,8 +17,6 @@ const Counter: React.FC<CounterProps> = (props: CounterProps) => {
     )
 }
 
-// AIzaSyAsf6_3yTJoVZeAFx2aQxxxMe0QQjRE-Ao
-
 const styles: { [key: string]: React.CSSProperties } = {
   header: {
     padding: '2em'
