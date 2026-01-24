@@ -3,8 +3,6 @@ import './App.css'
 import Counter from './components/Counter'
 import Header from './components/Header'
 import Box from '@mui/material/Box';
-import { ArticleTable } from './components/ArticleTable'
-import { fetchArticles, daysSinceLastFatality } from './services/articleService'
 import { fetchIncidentMetadata, fetchIncidents } from './services/incidentService'
 import { IncidentTable } from './components/IncidentTable'
 import { IncidentMap } from './components/IncidentMap'
@@ -12,7 +10,6 @@ import { IncidentMap } from './components/IncidentMap'
 const shittyCache = new Map()
 
 function App() {
-  const [articles, setArticles] = useState([])
   const [incidents, setIncidents] = useState([])
   const [totalIncidents, setTotalIncidents] = useState(0)
   const [days, setDays] = useState(0)
@@ -23,28 +20,6 @@ function App() {
   const [hoveredIncidentId, setHoveredIncidentId] = useState(null)
 
   const pageSize = 20
-
-  useEffect(function onLoadArticles() {
-    // Set days for counter
-    const days = daysSinceLastFatality(articles)
-    setDays(days)
-  }, [articles])
-
-  useEffect(() => {
-    const loadArticles = async () => {
-      try {
-        const data = await fetchArticles()
-        setArticles(data)
-      } catch (err) {
-        console.error('Error fetching articles:', err)
-        setError(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadArticles()
-  }, []) // Empty dependency array = runs once on mount
 
   useEffect(() => {
     const loadIncidents = async () => {
