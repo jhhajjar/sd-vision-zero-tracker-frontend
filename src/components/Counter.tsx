@@ -11,7 +11,7 @@ const Counter: React.FC<CounterProps> = (props: CounterProps) => {
             <h1>
             {numDays}
             </h1>
-            <h1>{dayText} without a casualty on San Diego's roads</h1>
+            <h1>{dayText} since someone was hurt or killed on San Diego's roads</h1>
         </div>
         </>
     )
