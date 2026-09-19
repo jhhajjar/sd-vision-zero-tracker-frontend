@@ -155,33 +155,34 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
     }
 
     // Add markers for incidents with valid coordinates
-    for (const incident of incidents) {
-      if (incident.latitude === null || incident.longitude === null) continue;
+    incidents?.forEach((incident) => {
+      if (incident.latitude !== null && incident.longitude !== null) {
 
-      const marker = new google.maps.Marker({
-        map: mapRef.current,
-        position: { lat: incident.latitude, lng: incident.longitude },
-        title: incident.full_address,
-        icon: getMarkerIcon(incident, false),
-      });
+        const marker = new google.maps.Marker({
+          map: mapRef.current,
+          position: { lat: incident.latitude, lng: incident.longitude },
+          title: incident.full_address,
+          icon: getMarkerIcon(incident, false),
+        });
 
-      // Click handler for info window
-      marker.addListener("click", () => {
-        const infoContent = createInfoWindowContent(incident);
-        infoWindowRef.current?.setContent(infoContent);
-        infoWindowRef.current?.open(mapRef.current, marker);
-      });
+        // Click handler for info window
+        marker.addListener("click", () => {
+          const infoContent = createInfoWindowContent(incident);
+          infoWindowRef.current?.setContent(infoContent);
+          infoWindowRef.current?.open(mapRef.current, marker);
+        });
 
-      // Hover handlers
-      marker.addListener("mouseover", () => {
-        onMarkerHover(incident.report_id);
-      });
-      marker.addListener("mouseout", () => {
-        onMarkerHover(null);
-      });
+        // Hover handlers
+        marker.addListener("mouseover", () => {
+          onMarkerHover(incident.report_id);
+        });
+        marker.addListener("mouseout", () => {
+          onMarkerHover(null);
+        });
 
-      markersRef.current.set(incident.report_id, marker);
-    }
+        markersRef.current.set(incident.report_id, marker);
+      }
+    });
   }, [mapReady, incidents, getMarkerIcon, createInfoWindowContent, onMarkerHover]);
 
   // Update marker size on hover state change (separate from marker creation)

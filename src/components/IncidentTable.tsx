@@ -103,7 +103,7 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
             </TableRow>
           </TableHead>
           <TableBody sx={loading ? { height: "100%" } : undefined}>
-            {loading ? spinner : incidents.map((row) => {
+            {loading ? spinner : incidents?.map((row) => {
               return (
                 <tr
                   key={row.report_id}
