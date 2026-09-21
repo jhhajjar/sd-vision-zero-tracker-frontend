@@ -32,7 +32,7 @@ interface Column {
 const columns: Column[] = [
   { id: "full_address", label: "Location", minWidth: 200 },
   { id: "date_time", label: "Date" },
-  { id: "charge_desc", label: "Charge Description" },
+  { id: "charge_desc", label: "Charge" },
   { id: "injured", label: "Injured", align: "right" },
   { id: "killed", label: "Killed", align: "right" },
 ];
