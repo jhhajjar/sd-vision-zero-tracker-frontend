@@ -18,6 +18,7 @@ function App() {
   const [incidentTablePage, setIncidentTablePage] = useState(0)
   const [error, setError] = useState(null)
   const [hoveredIncidentId, setHoveredIncidentId] = useState(null)
+  const [clickedIncidentId, setClickedIncidentId] = useState(null)
 
   const pageSize = 20
 
@@ -98,6 +99,8 @@ function App() {
             incidents={incidents}
             hoveredIncidentId={hoveredIncidentId}
             onMarkerHover={setHoveredIncidentId}
+            clickedIncidentId={clickedIncidentId}
+            setClickedIncidentId={setClickedIncidentId}
           />
         </Box>
         <Box sx={{ flex: 1 }}>
@@ -110,6 +113,7 @@ function App() {
             onPageChange={onPageChange}
             hoveredIncidentId={hoveredIncidentId}
             onHoverChange={setHoveredIncidentId}
+            setClickedIncidentId={setClickedIncidentId}
           />
         </Box>
       </Box>
