@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Box from "@mui/material/Box";
 import { Incident } from "../services/incidentService";
+import { createInfoWindowContent } from "../utils/markerPopUp";
 
 interface IncidentMapProps {
   incidents: Incident[];
   hoveredIncidentId: string | null;
   onMarkerHover: (reportId: string | null) => void;
+  clickedIncidentId: string | null;
+  setClickedIncidentId: (reportId: string | null) => void;
 }
 
 // San Diego center coordinates
@@ -55,6 +58,8 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
   incidents,
   hoveredIncidentId,
   onMarkerHover,
+  clickedIncidentId,
+  setClickedIncidentId,
 }) => {
   const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -64,7 +69,7 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
 
   const getMarkerIcon = useCallback(
     (incident: Incident, isHovered: boolean): google.maps.Symbol => {
-      const size = isHovered ? 12 : 8;
+      const size = isHovered ? 16 : 8;
       const color = incident.killed > 0 ? "#dc3545" : "#ffc107";
 
       return {
@@ -78,18 +83,6 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
     },
     []
   );
-
-  const createInfoWindowContent = useCallback((incident: Incident): string => {
-    return `
-      <div style="padding: 8px; max-width: 250px;">
-        <h4 style="margin: 0 0 8px 0; color: #333;">${incident.full_address}</h4>
-        <p style="margin: 4px 0; color: #666;"><strong>Date:</strong> ${incident.date_time}</p>
-        <p style="margin: 4px 0; color: #666;"><strong>Charge:</strong> ${incident.charge_desc || "N/A"}</p>
-        <p style="margin: 4px 0; color: #666;"><strong>Injured:</strong> ${incident.injured}</p>
-        <p style="margin: 4px 0; color: ${incident.killed > 0 ? "#dc3545" : "#666"};"><strong>Killed:</strong> ${incident.killed}</p>
-      </div>
-    `;
-  }, []);
 
   // Initialize map
   useEffect(() => {
@@ -152,6 +145,10 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
     // Create info window if not exists
     if (!infoWindowRef.current) {
       infoWindowRef.current = new google.maps.InfoWindow();
+      // Reset clicked state when the user closes the window so the same incident can be re-selected
+      infoWindowRef.current.addListener("closeclick", () => {
+        setClickedIncidentId(null);
+      });
     }
 
     // Add markers for incidents with valid coordinates
@@ -165,11 +162,9 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
           icon: getMarkerIcon(incident, false),
         });
 
-        // Click handler for info window
+        // Click handler - info window is opened by the clickedIncidentId effect
         marker.addListener("click", () => {
-          const infoContent = createInfoWindowContent(incident);
-          infoWindowRef.current?.setContent(infoContent);
-          infoWindowRef.current?.open(mapRef.current, marker);
+          setClickedIncidentId(incident.report_id);
         });
 
         // Hover handlers
@@ -183,7 +178,7 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
         markersRef.current.set(incident.report_id, marker);
       }
     });
-  }, [mapReady, incidents, getMarkerIcon, createInfoWindowContent, onMarkerHover]);
+  }, [mapReady, incidents, getMarkerIcon, onMarkerHover, setClickedIncidentId]);
 
   // Update marker size on hover state change (separate from marker creation)
   useEffect(() => {
@@ -197,6 +192,24 @@ export const IncidentMap: React.FC<IncidentMapProps> = ({
       marker.setIcon(getMarkerIcon(incident, isHovered));
     });
   }, [mapReady, hoveredIncidentId, incidents, getMarkerIcon]);
+
+  // Open the info window for the clicked incident (from a marker or a table row)
+  useEffect(() => {
+    if (!mapReady || !infoWindowRef.current) return;
+
+    const incident: Incident | undefined = incidents?.find((i) => i.report_id === clickedIncidentId);
+    const marker: google.maps.Marker | undefined = clickedIncidentId
+      ? markersRef.current.get(clickedIncidentId)
+      : undefined;
+
+    if (!incident || !marker) {
+      infoWindowRef.current.close();
+      return;
+    }
+
+    infoWindowRef.current.setContent(createInfoWindowContent(incident));
+    infoWindowRef.current.open(mapRef.current, marker);
+  }, [mapReady, clickedIncidentId, incidents]);
 
   return (
     <Box
