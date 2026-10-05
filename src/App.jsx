@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import { fetchIncidentMetadata, fetchIncidents } from './services/incidentService'
 import { IncidentTable } from './components/IncidentTable'
 import { IncidentMap } from './components/IncidentMap'
+import { FilterBar, NEIGHBORHOOD_OPTIONS } from './components/FilterBar'
 
 const shittyCache = new Map()
 
@@ -19,16 +20,19 @@ function App() {
   const [error, setError] = useState(null)
   const [hoveredIncidentId, setHoveredIncidentId] = useState(null)
   const [clickedIncidentId, setClickedIncidentId] = useState(null)
+  const [neighborhood, setNeighborhood] = useState(NEIGHBORHOOD_OPTIONS[0])
 
   const pageSize = 20
 
   useEffect(() => {
     const loadIncidents = async () => {
+        setIncidentTableLoading(true)
         try {
-          const data = await fetchIncidents(1, pageSize)
+          const data = await fetchIncidents({ neighborhood }, 1, pageSize)
           setIncidents(data.incidents)
           setTotalIncidents(data.totalIncidents)
-          shittyCache.set(1, data.incidents)
+          setIncidentTablePage(0)
+          shittyCache.set(`${neighborhood}|1`, data.incidents)
         } catch (err) {
           console.error('Error fetching incidents:', err)
           setError(err)
@@ -39,7 +43,7 @@ function App() {
       }
 
       loadIncidents()
-  }, []) // Empty dependency array = runs once on mount
+  }, [neighborhood])
 
   useEffect(() => {
     const loadIncidentMetadata = async () => {
@@ -60,20 +64,21 @@ function App() {
 
   const onPageChange = async (_, newPage) => {
     const pageParam = newPage + 1; // Convert zero-based to one-based index
+    const cacheKey = `${neighborhood}|${pageParam}`
     
     // Fetch new incidents for the selected page
     setIncidentTableLoading(true)
-    if (shittyCache.has(pageParam)) {
-      const cachedIncidents = shittyCache.get(pageParam)
+    if (shittyCache.has(cacheKey)) {
+      const cachedIncidents = shittyCache.get(cacheKey)
       setIncidents(cachedIncidents)
     } else {
       // Get from backend
-      const newIncidents = await fetchIncidents(pageParam, pageSize)
+      const newIncidents = await fetchIncidents({ neighborhood }, pageParam, pageSize)
       setIncidents(newIncidents.incidents)
       setTotalIncidents(newIncidents.totalIncidents)
       
       // Set cache
-      shittyCache.set(pageParam, newIncidents.incidents)
+      shittyCache.set(cacheKey, newIncidents.incidents)
     }
     setIncidentTableLoading(false)
     setIncidentTablePage(newPage)
@@ -91,10 +96,10 @@ function App() {
         flexDirection: 'row',
         gap: 3,
         alignItems: 'stretch',
-        height: 500,
+        height: 750,
         padding: 2,
       }}>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minHeight: 0 }}>
           <IncidentMap
             incidents={incidents}
             hoveredIncidentId={hoveredIncidentId}
@@ -103,7 +108,8 @@ function App() {
             setClickedIncidentId={setClickedIncidentId}
           />
         </Box>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          <FilterBar neighborhood={neighborhood} setNeighborhoodFilter={setNeighborhood} incidentTableLoading={incidentTableLoading}></FilterBar>
           <IncidentTable
             loading={incidentTableLoading}
             incidents={incidents}
