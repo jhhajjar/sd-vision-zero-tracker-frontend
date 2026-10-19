@@ -31,7 +31,8 @@ function App() {
     console.log(neighborhood)
     const cacheKey = getCacheKey()
     if(shittyCache.has(cacheKey)) {
-      return shittyCache.get(cacheKey)
+      setIncidents(shittyCache.get(cacheKey))
+      return
     }
 
     setIncidentTableLoading(true)

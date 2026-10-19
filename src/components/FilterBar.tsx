@@ -58,7 +58,7 @@ export const FilterBar: React.FC<FilterBarProps> = (props: FilterBarProps) => {
             <Select
               value={severity}
               label="Severity"
-              onChange={(event) => setSeverityFilter(event?.target?.value?.toLowerCase())}
+              onChange={(event) => setSeverityFilter(event?.target?.value)}
               sx={SELECT_SX}
               disabled={incidentTableLoading}
               >
