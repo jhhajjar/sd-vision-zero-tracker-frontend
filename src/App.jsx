@@ -28,7 +28,6 @@ function App() {
   const getCacheKey = () => `${severity}${neighborhood}${incidentTablePage}`
 
   async function loadIncidents() {
-    console.log(neighborhood)
     const cacheKey = getCacheKey()
     if(shittyCache.has(cacheKey)) {
       setIncidents(shittyCache.get(cacheKey))
