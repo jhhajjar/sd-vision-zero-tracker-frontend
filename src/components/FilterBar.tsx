@@ -49,9 +49,7 @@ export const FilterBar: React.FC<FilterBarProps> = (props: FilterBarProps) => {
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
-        <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "24px", color: '#fff' }}>
-          Filter
-        </Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "24px", color: '#fff' }} />
         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
           <FormControl sx={{ m: 1, minWidth: 200, color: '#fff' }} size="small">
             <InputLabel sx={{ color: '#fff' }}>Severity</InputLabel>
