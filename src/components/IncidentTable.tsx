@@ -62,7 +62,6 @@ export const IncidentTable: React.FC<TableProps> = (props: TableProps) => {
             justifyContent: "center",
             alignItems: "center",
             height: "100%",
-            // minHeight: 300,
           }}
         >
           <CircularProgress />
