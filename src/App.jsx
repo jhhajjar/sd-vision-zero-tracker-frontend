@@ -103,19 +103,21 @@ function App() {
             setClickedIncidentId={setClickedIncidentId}
           />
         </Box>
-        <Box sx={{ flex: 1, minHeight: 0 }}>
+        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           <FilterBar severity={severity} setSeverityFilter={setSeverityFilter} neighborhood={neighborhood} setNeighborhoodFilter={setNeighborhood} incidentTableLoading={incidentTableLoading}></FilterBar>
-          <IncidentTable
-            loading={incidentTableLoading}
-            incidents={incidents}
-            page={incidentTablePage}
-            pageSize={pageSize}
-            totalIncidents={totalIncidents}
-            onPageChange={onPageChange}
-            hoveredIncidentId={hoveredIncidentId}
-            onHoverChange={setHoveredIncidentId}
-            setClickedIncidentId={setClickedIncidentId}
-          />
+          <Box sx={{ flex: 1, minHeight: 0 }}>
+            <IncidentTable
+              loading={incidentTableLoading}
+              incidents={incidents}
+              page={incidentTablePage}
+              pageSize={pageSize}
+              totalIncidents={totalIncidents}
+              onPageChange={onPageChange}
+              hoveredIncidentId={hoveredIncidentId}
+              onHoverChange={setHoveredIncidentId}
+              setClickedIncidentId={setClickedIncidentId}
+            />
+          </Box>
         </Box>
       </Box>
       {/* <ArticleTable articles={articles} /> */}
